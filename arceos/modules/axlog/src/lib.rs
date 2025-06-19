@@ -71,12 +71,12 @@ macro_rules! ax_print {
     }
 }
 
-/// Prints to the console, with a newline.
+/// Prints to the console, with a newline.  这里是内核输出
 #[macro_export]
 macro_rules! ax_println {
     () => { $crate::ax_print!("\n") };
     ($($arg:tt)*) => {
-        $crate::__print_impl(format_args!("{}\n", format_args!($($arg)*)));
+        $crate::__print_impl(format_args!("\u{1B}[31m{}\u{1B}[m\n", format_args!($($arg)*)));
     }
 }
 
@@ -230,6 +230,7 @@ pub fn print_fmt(args: fmt::Arguments) -> fmt::Result {
     static LOCK: SpinNoIrq<()> = SpinNoIrq::new(());
 
     let _guard = LOCK.lock();
+    // 最终走到了这个log输出代码
     Logger.write_fmt(args)
 }
 
